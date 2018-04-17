@@ -80,13 +80,74 @@ for record in records_to_remove:
     data_dict.pop(record, 0)
 
 
-### Task 3: Create new feature(s)
-### Store to my_dataset for easy export below.
-#my_dataset = data_dict
+### Create features
+def compute_fraction(poi_messages, all_messages):
+    """ return fraction of messages related to POI of all messages"""    
+    if poi_messages == 'NaN' or all_messages == 'NaN':
+        return 'NaN'
+    fraction = poi_messages / all_messages
+    return fraction
+
+my_dataset = data_dict
+for name in my_dataset.keys():
+    data_point = my_dataset[name]
+    from_poi_to_this_person = data_point['from_poi_to_this_person']
+    to_messages = data_point['to_messages']
+    fraction_from_poi = compute_fraction(from_poi_to_this_person, to_messages)
+    data_point['fraction_from_poi'] = fraction_from_poi
+    from_this_person_to_poi = data_point['from_this_person_to_poi']
+    from_messages = data_point['from_messages']
+    fraction_to_poi = compute_fraction(from_this_person_to_poi, from_messages)
+    data_point['fraction_to_poi'] = fraction_to_poi
+    shared_receipt_with_poi = data_point['shared_receipt_with_poi']
+    fraction_shared_with_poi = compute_fraction(shared_receipt_with_poi, to_messages)
+    data_point['fraction_with_poi'] = fraction_shared_with_poi
+    
+features_list = features_list + ['fraction_from_poi', 'fraction_to_poi', 'fraction_with_poi']
+
+### Get K-best features
+from sklearn.feature_selection import SelectKBest
+k = 5
+
+data = featureFormat(my_dataset, features_list)
+labels, features = targetFeatureSplit(data)
+
+k_best = SelectKBest(k=k)
+k_best.fit(features, labels)
+scores = k_best.scores_
+d = dict(zip(features_list[1:], scores))
+sorted_pairs = [(k, d[k]) for k in sorted(d, key=d.get, reverse=True)]
+best_features = list(map(lambda x: x[0], sorted_pairs[:k]))
+
+### Add other engineered features
+extended_best_features = best_features + ['fraction from poi', 'fraction with poi']
+
+
+### Impute missing values with medians
+def impute_with_medians(data_dict, feature):
+    """change NaNs to median values"""
+    list_of_values = []
+    for name in data_dict.keys():
+        if data_dict[name][feature] != 'NaN':
+            list_of_values.append(data_dict[name][feature])
+    median = np.median(list_of_values)
+    for name in data_dict.keys():
+        if data_dict[name][feature] == 'NaN':
+            data_dict[name][feature] = median
+
+for feature in extended_best_features:
+    impute_with_medians(my_data, feature)
+
 
 ### Extract features and labels from dataset for local testing
-#data = featureFormat(my_dataset, features_list, sort_keys = True)
-#labels, features = targetFeatureSplit(data)
+my_feature_list = [label] + extended_best_features
+data = featureFormat(my_dataset, my_feature_list, sort_keys = True)
+labels, features = targetFeatureSplit(data)
+
+### Scale features via min-max
+from sklearn import preprocessing
+scaler = preprocessing.MinMaxScaler()
+features = scaler.fit_transform(features)
 
 ### Task 4: Try a varity of classifiers
 ### Please name your classifier clf for easy export below.
