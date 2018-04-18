@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 sys.path.append("../tools/")
 
 from feature_format import featureFormat, targetFeatureSplit
-#from tester import dump_classifier_and_data
+from tester import dump_classifier_and_data
 
 label = 'poi'
 financial_features = [
@@ -137,38 +137,34 @@ from sklearn.preprocessing import RobustScaler
 scaler = RobustScaler()
 features = scaler.fit_transform(features)
 
-### Task 4: Try a varity of classifiers
-### Please name your classifier clf for easy export below.
-### Note that if you want to do PCA or other multi-stage operations,
-### you'll need to use Pipelines. For more info:
-### http://scikit-learn.org/stable/modules/pipeline.html
+### Tuning: grid search
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+param_grid = {'tol': [0.0001, 0.001, 0.1],'C': [0.01, 0.1, 1, 10, 100, 1000], 'class_weight':['balanced']} 
+grid = GridSearchCV(LogisticRegression(), param_grid)
+grid.fit(features_train, labels_train)
+print(grid.best_params_)
 
-# Provided to give you a starting point. Try a variety of classifiers.
-#from sklearn.naive_bayes import GaussianNB
-#clf = GaussianNB()
+### Creating classificator 
+clf = LogisticRegression(tol=0.001, C=0.025, class_weight='balanced')
 
-### Task 5: Tune your classifier to achieve better than .3 precision and recall 
-### using our testing script. Check the tester.py script in the final project
-### folder for details on the evaluation method, especially the test_classifier
-### function. Because of the small size of the dataset, the script uses
-### stratified shuffle split cross validation. For more info: 
-### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
+### My custom score
+def classification_report_with_accuracy_score(y_true, y_pred):
+    original.extend(y_true)
+    predicted.extend(y_pred)
+    return accuracy_score(y_true, y_pred) 
 
-# Example starting point. Try investigating other evaluation techniques!
-"""from sklearn.cross_validation import train_test_split
-features_train, features_test, labels_train, labels_test = \
-    train_test_split(features, labels, test_size=0.3, random_state=42)
+### Cross-validation of algorithm on 1000 different splits
+from sklearn.model_selection import cross_val_score, StratifiedShuffleSplit
+from sklearn.metrics.scorer import make_scorer
+original = []
+predicted = []
+cv = StratifiedShuffleSplit(n_splits=1000, random_state=42)
+score = cross_val_score(clf, features, labels, cv=cv, scoring=make_scorer(classification_report_with_accuracy_score))
 
-clf.fit(features_train, labels_train)
-pred = clf.predict(features_test)
-from sklearn.metrics import recall_score, precision_score
-print("recall is " + str(recall_score(labels_test, pred)))
-print("precision is " + str(precision_score(labels_test, pred)))
-print(pred)"""
+### Print average values in classification report for all folds in a K-fold Cross-validation  
+print(classification_report(original, predicted)) 
 
-### Task 6: Dump your classifier, dataset, and features_list so anyone can
-### check your results. You do not need to change anything below, but make sure
-### that the version of poi_id.py that you submit can be run on its own and
-### generates the necessary .pkl files for validating your results.
+### Dumping my classifier, dataset, and features_list 
 
-#dump_classifier_and_data(clf, my_dataset, features_list)
+dump_classifier_and_data(clf, my_dataset, features_list)
