@@ -120,7 +120,7 @@ sorted_pairs = [(k, d[k]) for k in sorted(d, key=d.get, reverse=True)]
 best_features = list(map(lambda x: x[0], sorted_pairs[:k]))
 
 ### Add other engineered features
-extended_best_features = best_features + ['fraction_to_poi', 'fraction_from_poi', 'fraction_withpoi']
+extended_best_features = best_features + ['fraction_to_poi', 'fraction_from_poi', 'fraction_with_poi']
 
 ### Extract features and labels from dataset for local testing
 my_feature_list = [label] + extended_best_features
@@ -139,7 +139,8 @@ features = scaler.fit_transform(features)
 
 ### Tuning: grid search
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV
+features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=0.25, random_state=42)
 param_grid = {'tol': [0.0001, 0.001, 0.1],'C': [0.01, 0.1, 1, 10, 100, 1000], 'class_weight':['balanced']} 
 grid = GridSearchCV(LogisticRegression(), param_grid)
 grid.fit(features_train, labels_train)
