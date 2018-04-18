@@ -132,9 +132,9 @@ my_feature_list = [label] + extended_best_features
 data = featureFormat(my_dataset, my_feature_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-### Scale features via min-max
-from sklearn import preprocessing
-scaler = preprocessing.MinMaxScaler()
+### Scale features via robust scaler
+from sklearn.preprocessing import RobustScaler
+scaler = RobustScaler()
 features = scaler.fit_transform(features)
 
 ### Task 4: Try a varity of classifiers
