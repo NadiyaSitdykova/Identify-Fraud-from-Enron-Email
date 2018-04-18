@@ -122,22 +122,10 @@ best_features = list(map(lambda x: x[0], sorted_pairs[:k]))
 ### Add other engineered features
 extended_best_features = best_features + ['fraction from poi', 'fraction with poi']
 
-
 ### Impute missing values with medians
-def impute_with_medians(data_dict, feature):
-    """change NaNs to median values"""
-    list_of_values = []
-    for name in data_dict.keys():
-        if data_dict[name][feature] != 'NaN':
-            list_of_values.append(data_dict[name][feature])
-    median = np.median(list_of_values)
-    for name in data_dict.keys():
-        if data_dict[name][feature] == 'NaN':
-            data_dict[name][feature] = median
-
-for feature in extended_best_features:
-    impute_with_medians(my_data, feature)
-
+from sklearn.preprocessing import Imputer
+imputer = Imputer(missing_values='NaN', strategy='median', axis=0)
+features = imputer.fit_transform(features)
 
 ### Extract features and labels from dataset for local testing
 my_feature_list = [label] + extended_best_features
