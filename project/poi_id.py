@@ -85,7 +85,7 @@ def compute_fraction(poi_messages, all_messages):
     """ return fraction of messages related to POI of all messages"""    
     if poi_messages == 'NaN' or all_messages == 'NaN':
         return 'NaN'
-    fraction = poi_messages / all_messages
+    fraction = float(poi_messages) / all_messages
     return fraction
 
 my_dataset = data_dict
@@ -116,7 +116,7 @@ k_best = SelectKBest(k=k)
 k_best.fit(features, labels)
 scores = k_best.scores_
 d = dict(zip(features_list[1:], scores))
-sorted_pairs = [(k, d[k]) for k in sorted(d, key=d.get, reverse=True)]
+sorted_pairs = [(i, d[i]) for i in sorted(d, key=d.get, reverse=True)]
 best_features = list(map(lambda x: x[0], sorted_pairs[:k]))
 
 ### Add other engineered features
