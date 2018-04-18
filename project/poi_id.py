@@ -107,7 +107,7 @@ features_list = features_list + ['fraction_from_poi', 'fraction_to_poi', 'fracti
 
 ### Get K-best features
 from sklearn.feature_selection import SelectKBest
-k = 5
+k = 1
 
 data = featureFormat(my_dataset, features_list)
 labels, features = targetFeatureSplit(data)
@@ -120,7 +120,7 @@ sorted_pairs = [(k, d[k]) for k in sorted(d, key=d.get, reverse=True)]
 best_features = list(map(lambda x: x[0], sorted_pairs[:k]))
 
 ### Add other engineered features
-extended_best_features = best_features + ['fraction from poi', 'fraction with poi']
+extended_best_features = best_features + ['fraction_to_poi', 'fraction from poi', 'fraction with poi']
 
 ### Extract features and labels from dataset for local testing
 my_feature_list = [label] + extended_best_features
