@@ -122,15 +122,15 @@ best_features = list(map(lambda x: x[0], sorted_pairs[:k]))
 ### Add other engineered features
 extended_best_features = best_features + ['fraction from poi', 'fraction with poi']
 
-### Impute missing values with medians
-from sklearn.preprocessing import Imputer
-imputer = Imputer(missing_values='NaN', strategy='median', axis=0)
-features = imputer.fit_transform(features)
-
 ### Extract features and labels from dataset for local testing
 my_feature_list = [label] + extended_best_features
 data = featureFormat(my_dataset, my_feature_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
+
+### Impute missing values with medians
+from sklearn.preprocessing import Imputer
+imputer = Imputer(missing_values='NaN', strategy='median', axis=0)
+features = imputer.fit_transform(features)
 
 ### Scale features via robust scaler
 from sklearn.preprocessing import RobustScaler
