@@ -150,6 +150,7 @@ print(grid.best_params_)
 clf = LogisticRegression(tol=0.001, C=0.025, class_weight='balanced')
 
 ### My custom score
+from sklearn.metrics import accuracy_score, classification_report
 def classification_report_with_accuracy_score(y_true, y_pred):
     original.extend(y_true)
     predicted.extend(y_pred)
