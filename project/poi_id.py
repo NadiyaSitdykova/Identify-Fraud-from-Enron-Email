@@ -111,7 +111,6 @@ k = 1
 
 data = featureFormat(my_dataset, features_list)
 labels, features = targetFeatureSplit(data)
-
 k_best = SelectKBest(k=k)
 k_best.fit(features, labels)
 scores = k_best.scores_
@@ -123,8 +122,8 @@ best_features = list(map(lambda x: x[0], sorted_pairs[:k]))
 extended_best_features = best_features + ['fraction_to_poi', 'fraction_from_poi', 'fraction_with_poi']
 
 ### Extract features and labels from dataset for local testing
-my_feature_list = [label] + extended_best_features
-data = featureFormat(my_dataset, my_feature_list, sort_keys = True)
+my_features_list = [label] + extended_best_features
+data = featureFormat(my_dataset, my_features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
 ### Impute missing values with medians
@@ -169,4 +168,4 @@ print(classification_report(original, predicted))
 
 ### Dumping my classifier, dataset, and features_list 
 
-dump_classifier_and_data(clf, my_dataset, features_list)
+dump_classifier_and_data(clf, my_dataset, my_features_list)
