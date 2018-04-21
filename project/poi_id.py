@@ -146,7 +146,10 @@ grid.fit(features_train, labels_train)
 print(grid.best_params_)
 
 ### Creating classificator 
-clf = LogisticRegression(tol=0.001, C=0.025, class_weight='balanced')
+logistic_regression = LogisticRegression(tol=0.001, C=0.025, class_weight='balanced')
+
+from sklearn.pipeline import Pipeline
+clf = Pipeline([('imputer', imputer), ('scaler', scaler), ('logistic_regression', logistic_regression)])
 
 ### My custom score
 from sklearn.metrics import accuracy_score, classification_report
