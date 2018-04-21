@@ -54,7 +54,7 @@ for feature in features_list:
     print(feature + " " + str(missing_values[feature]))
 
 ### Explore outliers
-def PlotScatter(data_dict, feature_x, feature_y):
+def plot_scatter(data_dict, feature_x, feature_y):
     """ Plot with flag = True in Red """
     data = featureFormat(data_dict, [feature_x, feature_y, label])
     for point in data:
@@ -70,9 +70,9 @@ def PlotScatter(data_dict, feature_x, feature_y):
     plt.ylabel(feature_y)
     plt.show()
 
-PlotScatter(data_dict, 'total_payments', 'total_stock_value')
-PlotScatter(data_dict, 'salary', 'bonus')
-PlotScatter(data_dict, 'from_poi_to_this_person', 'from_this_person_to_poi')
+plot_scatter(data_dict, 'total_payments', 'total_stock_value')
+plot_scatter(data_dict, 'salary', 'bonus')
+plot_scatter(data_dict, 'from_poi_to_this_person', 'from_this_person_to_poi')
 
 ### Remove meaningless records,outlier and data-entry error
 records_to_remove = ['LOCKHART EUGENE E', 'TOTAL', 'THE TRAVEL AGENCY IN THE PARK']
