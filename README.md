@@ -44,7 +44,16 @@ Other outliers wasn't removed as they contained crucial information. Turns out t
 
 __*Question 2: What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it.*__
 
-I engineered three new features: "fraction of emails to poi", "fraction of emails from poi", "fraction of emails with shared receipt with poi". I believe that it's more accurate to use this features, rather than absolute amount of messages to/from/with poi. I suspected that poi would communicate with poi more frequently, than not-poi, so I left all three engineered features in my final feature list. Also I used feature "exercised stock option". This features make sense, as poi supposed to get a lot of money from their fraud exactly by exercising stock option. But actually I got this feature using SelectKBest with k=1. So I had 4 features in my final list and I filled missing values with medians for them. I ended up with that list of features, because they had sense for me and I got better results on them. Then I scaled features via robust scale (appropriate for features with outliers), because I was going to try logistic regression and this algorithm needs features to be scaled. I tried decision tree as well on scaled features, although for this algorithm it wasn't necessary, but it didn't hurt either.
+I engineered three new features: "fraction of emails to poi", "fraction of emails from poi", "fraction of emails with shared receipt with poi". I believe that it's more accurate to use this features, rather than absolute amount of messages to/from/with poi. I suspected that poi would communicate with poi more frequently, than not-poi, so I left all three engineered features in my final feature list. They proved to be useful, as the same simple classifer (logistic regression with default tol and C) showed better results with this features:
+
+| Metric   | Without new features | With new features|
+|----------|----------------------|------------------|
+|Precision | 0.25                 | 0.33             |
+|Recall    | 0.47                 | 0.59             |
+|F1-score  | 0.33                 | 0.43             |
+
+
+ Also I used feature "exercised stock option". This features make sense, as poi supposed to get a lot of money from their fraud exactly by exercising stock option. But actually I got this feature using SelectKBest with k=1. So I had 4 features in my final list and I filled missing values with medians for them. I ended up with that list of features, because they had sense for me and I got better results on them. Then I scaled features via robust scale (appropriate for features with outliers), because I was going to try logistic regression and this algorithm needs features to be scaled. I tried decision tree as well on scaled features, although for this algorithm it wasn't necessary, but it didn't hurt either.
 
 __*Question 3: What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?*__
 
