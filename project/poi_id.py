@@ -136,9 +136,17 @@ features = scaler.fit_transform(features)
 ### Tuning: grid search
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import precision_score, recall_score
+from sklearn.metrics.scorer import make_scorer
+
+def max_recall_with_decent_precision_score(y_true, y_pred):
+    if precision_score(y_true, y_pred) > 0.29:
+        return recall_score(y_true, y_pred)
+    return 0
+
 features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=0.25, random_state=42)
-param_grid = {'tol': [0.0001, 0.001, 0.1],'C': [0.01, 0.1, 1, 10, 100, 1000], 'class_weight':['balanced']} 
-grid = GridSearchCV(LogisticRegression(), param_grid)
+param_grid = {'tol': [0.1, 0.01, 0.001, 0.0001],'C': [0.01, 0.1, 1, 10, 100, 1000], 'class_weight':['balanced']} 
+grid = GridSearchCV(LogisticRegression(), param_grid, scoring=make_scorer(max_recall_with_decent_precision_score), cv=5)
 grid.fit(features_train, labels_train)
 print(grid.best_params_)
 
@@ -157,7 +165,7 @@ def classification_report_with_accuracy_score(y_true, y_pred):
 
 ### Cross-validation of algorithm on 1000 different splits
 from sklearn.model_selection import cross_val_score, StratifiedShuffleSplit
-from sklearn.metrics.scorer import make_scorer
+
 original = []
 predicted = []
 cv = StratifiedShuffleSplit(n_splits=1000, random_state=42)
